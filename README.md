@@ -1,7 +1,7 @@
 # GSE Data Integration Engine (Freddie Mac & Fannie Mae)
 
 **Status:**  *Project In Progress* 
-*Currently optimizing the unified ingestion layer and implementing Parquet-to-Parquet transformations.*
+*Currently developing the metadata-driven schema mapping layer to unify disparate GSE attributes.*
 
 ## Project Overview
 This project is a high-performance data engineering platform designed to ingest, reconcile, and standardize massive-scale mortgage performance data from **Freddie Mac** and **Fannie Mae** (2015–Present). 
