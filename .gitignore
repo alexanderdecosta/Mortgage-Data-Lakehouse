@@ -205,3 +205,17 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# GSE DATA FILES (CRITICAL)
+# Ignore all raw, silver, and gold data
+data/raw/
+data/silver/
+data/gold/
+*.parquet
+*.csv
+*.txt
+*.duckdb
+
+# If you want to keep the folder structure on GitHub but not the data, 
+# you can use these "allow" rules, but the simplest is just to ignore the directories.
