@@ -17,7 +17,7 @@ This high-performance data engineering platform ingests, reconciles, and standar
 
 ### 2. Schema Standardization & Surgical Polish
 * **Strict Type Enforcement:** Vectorized casting of `VARCHAR` strings into high-performance numeric and temporal types (e.g., `Date32`, `Decimal`).
-* **Surgical Normalization:** Standardizes disparate entity naming (e.g., merging "Rocket Mortgage LLC" and "ROCKET MORTGAGE") and geographic identifiers across 60+ columns.
+* **Surgical Normalization:** Standardizes disparate entity naming conventions and identifiers across 60+ columns.
 * **Sentinel Resolution:** Identifies institutional "placeholder" or sentinel values (e.g., `999`, `Unknown`, `NP`) within raw datasets and recasts them to true `NULL` to prevent statistical skew.
 
 ---
