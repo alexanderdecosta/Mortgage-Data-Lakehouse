@@ -28,7 +28,7 @@ Leveraging a Medallion Architecture, the pipeline also implements an HPI-based M
 Obtain the raw source files from the following portals:
 * **Fannie Mae:** [Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data) (2021–2025 Acquisition/Performance).
 * **Freddie Mac:** [Single-Family Loan-Level Dataset](https://www.freddiemac.com/research/datasets/sf-loanlevel-dataset) (2021–2025 Historical).
-* **FMHPI:** [HPI Master Files](https://www.freddiemac.com/research/indices/house-price-index) (HPI_master.csv).
+* **FMHPI:** [HPI Master Files](https://www.freddiemac.com/research/indices/house-price-index) (fmhpi_master_file.csv).
 
 ### 2. Directory Structure
 ```text
