@@ -17,7 +17,7 @@ Leveraging a Medallion Architecture, the pipeline also implements an HPI-based M
 
 ### 2. Schema Standardization & Surgical Polish
 * **Strict Type Enforcement:** Vectorized casting of `VARCHAR` strings into high-performance numeric and temporal types (e.g., `Date32`, `Decimal`).
-* **Surgical Normalization:** Standardizes disparate entity naming conventions and identifiers across 52 columns.
+* **Surgical Normalization:** Standardizes disparate entity naming conventions and identifiers across 53 columns.
 * **Sentinel Resolution:** Identifies institutional "placeholder" or sentinel values (e.g., `999`, `Unknown`, `NP`) within raw datasets and recasts them to true `NULL` to prevent statistical skew.
 
 ---
@@ -69,7 +69,7 @@ Run the scripts in the following order to maintain data integrity and manage dis
 
 ## Data Audit & Validation
 
-The final gold layer was validated using `audit_24k.py`, which produces a full statistical profile across all 52 standardised columns. The results below serve as a known-good baseline — re-running the audit on a reproduced dataset should match these figures.
+The final gold layer was validated using `audit_24k.py`, which produces a full statistical profile across all 53 standardised columns. The results below serve as a known-good baseline — re-running the audit on a reproduced dataset should match these figures.
 
 **Total rows: ~630.2M** (FNM: 343.5M / FRE: 286.7M)
 
