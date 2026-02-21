@@ -52,14 +52,14 @@ Obtain the raw source files from the following portals:
 
 Run the scripts in the following order to maintain data integrity and manage disk pressure:
 
-stream_to_parquet.py: Streams raw Agency CSVs into partitioned Silver Parquet files.
+**stream_to_parquet.py:** Streams raw Agency CSVs into partitioned Silver Parquet files.
 
-fmhpi_to_parquet.py: Converts raw FHFA indices into indexed Parquet format.
+**fmhpi_to_parquet.py:** Converts raw FHFA indices into indexed Parquet format.
 
-goldgenerator.py: Aggregates processed files for enrichment.
+**goldgenerator.py:** Aggregates processed files for enrichment.
 
-24kgoldgenerator.py: Performs the massive time-series join between Agency data and HPI data.
+**24kgoldgenerator.py:** Performs the massive time-series join between Agency data and HPI data.
 
-final_polish.py: Executes surgical cleaning on strings and geographic codes.
+**final_polish.py:** Executes surgical cleaning on strings and geographic codes.
 
-audit_24k.py: Generates the final statistical profile.
+**audit_24k.py:** Generates the final statistical profile.
