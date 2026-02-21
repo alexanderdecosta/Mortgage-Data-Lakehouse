@@ -34,6 +34,9 @@ for col in numeric_cols:
     
     print(f"{col:<25} | {stats[0]:<10,} | {stats[1]:<8.1f} | {stats[2]:<8.1f} | {stats[3]:<8.1f} | {stats[4]:<8.1f} | {stats[5]:<8.1f} | {stats[6]:<8.1f}")
 
+loan_age_neg = con.execute("SELECT COUNT(*) FROM gold_view WHERE loan_age < 0").fetchone()[0]
+print(f"loan_age < 0: {loan_age_neg:,} rows ({loan_age_neg/total_rows*100:.4f}%)")
+
 # --- PART 2: CATEGORICAL PROFILING (TOP 10) ---
 print("\n\n PART 2: CATEGORICAL CONCENTRATION (Top 10 Values)")
 print("-" * 115)
