@@ -1,42 +1,65 @@
 # GSE Data Integration Engine (Freddie Mac & Fannie Mae)
 
-**Status:**  *Project In Progress* 
-*Currently developing the metadata-driven schema mapping layer to unify disparate GSE attributes.*
-
 ## Project Overview
-This project is a high-performance data engineering platform designed to ingest, reconcile, and standardize massive-scale mortgage performance data from **Freddie Mac** and **Fannie Mae** (2015–Present). 
+The core achievement of this pipeline is the resolution of the **"Fannie Mae Null Gap"** for the 2021–2025 period. Utilizing a custom **Mark-to-Market (MtM) enrichment engine**, the pipeline backfilled critical missing valuation data, ensuring continuity in loan-to-value analysis across the dataset. 
 
-The primary engineering challenge is the "Variety" problem: while both agencies follow the Uniform Mortgage Data Program (UMDP), their raw data formats, delimiters, and schema naming conventions differ. This engine builds a **Medallion Architecture** to transform raw, siloed text files into a unified, query-ready data lake.
+This high-performance data engineering platform ingests, reconciles, and standardizes massive-scale mortgage performance data from **Freddie Mac** and **Fannie Mae** using a **Medallion Architecture** to transform siloed text files into a unified, query-ready data lake..
 
 
 
 ## Architectural Features
 
-### 1. Out-of-Core Ingestion (Bronze Layer)
-* **Storage Efficiency:** Designed to handle 100GB+ of raw data on a standard laptop by utilizing **DuckDB**'s vectorized execution engine.
-* **Stream-to-Parquet:** Implements a streaming ingestion pipeline that converts raw pipe-delimited (Freddie) and CSV (Fannie) files directly into compressed **Apache Parquet**, bypassing memory (RAM) limitations.
-* **Disk Management:** Includes automated cleanup routines to delete high-volume raw source files post-conversion, maintaining a minimal storage footprint.
+### 1. Out-of-Core Ingestion & Enrichment
+* **Time Horizon:** Processed 630M+ performance data from **2021 Q1 through 2025 Q3**.
+* **Storage Efficiency:** Designed to handle 10GB+ of raw data on a standard laptop by utilizing **DuckDB**'s vectorized execution engine.
+* **Vectorized HPI Joins:** Executes complex time-series joins against FHFA House Price Indices at the MSA level. This engineered a **Mark-to-Market CLTV** metric, reducing valuation null-density from **54.5% to <0.1%**.
+* **Disk Management:** Optimized for high-volume processing within local storage constraints. The pipeline utilizes streaming operations to bypass RAM limitations and includes automated routines to prune intermediate artifacts.
 
-### 2. Schema Standardization (Silver Layer)
-* **Metadata-Driven Mapping:** Uses a unified schema dictionary to resolve naming conflicts (e.g., aligning `ORIG_DTI` vs `DTI`) and inconsistent categorical encodings.
-* **Type-Safe Transformation:** Leverages **Polars LazyFrames** to perform multi-threaded type-casting, null-handling, and string-to-categorical normalization across billions of records.
-* **Partitioned Storage:** Implements a columnar storage strategy partitioned by `Origination_Year` to optimize query performance for downstream analytics.
-
-### 3. Data Integrity & Reconciliation
-* **Large-Scale Deduplication:** Algorithms built to identify overlapping loan entries across GSE portfolios using composite keys (Zip Code + Original Loan Amount + Origination Date).
-* **Validation Checks:** Automated schema-drift detection to ensure monthly performance updates maintain longitudinal consistency.
-
-## 🛠️ Technical Stack
-* **Engine:** [DuckDB](https://duckdb.org/) (In-process OLAP)
-* **Processing:** [Polars](https://pola.rs/) (Multi-threaded DataFrames)
-* **Storage:** Apache Parquet (Columnar compression / Snappy)
-* **Environment:** Python 3.x / PyArrow
+### 2. Schema Standardization & Surgical Polish
+* **Strict Type Enforcement:** Vectorized casting of `VARCHAR` strings into high-performance numeric and temporal types (e.g., `Date32`, `Decimal`).
+* **Surgical Normalization:** Standardizes disparate entity naming (e.g., merging "Rocket Mortgage LLC" and "ROCKET MORTGAGE") and geographic identifiers across 60+ columns.
+* **Sentinel Resolution:** Identifies institutional "placeholder" or sentinel values (e.g., `999`, `Unknown`, `NP`) within raw datasets and recasts them to true `NULL` to prevent statistical skew.
 
 ---
 
-## Engineering Roadmap
-- [x] Initial pipeline architecture design.
-- [x] Automated ingestion script (Bronze Layer).
-- [ ] Unified Schema Mapping (Silver Layer).
-- [ ] Composite key deduplication logic.
-- [ ] Final optimized Gold table generation.
+## Instructions: How to Reproduce
+
+### 1. Data Acquisition
+Obtain the raw source files from the following portals:
+* **Fannie Mae:** [Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data) (2021–2025 Acquisition/Performance).
+* **Freddie Mac:** [Single-Family Loan-Level Dataset](https://sf.freddiemac.com/tools-learning/resources/sf-loan-level-dataset) (2021–2025 Historical).
+* **FHFA:** [HPI Master Files](https://www.fhfa.gov/DataTools/Downloads/Pages/House-Price-Index-Datasets.aspx) (HPI_master.csv).
+
+### 2. Directory Structure
+```text
+/
+├── scripts/
+│   ├── stream_to_parquet.py    # Initial Bronze ingestion (Raw to Silver)
+│   ├── fmhpi_to_parquet.py     # HPI specific ingestion
+│   ├── goldgenerator.py        # Merges parquets into gold
+│   ├── 24kgoldgenerator.py     # HPI Enrichment & Silver-to-Gold join
+│   ├── final_polish.py         # Final string & geo normalization
+│   └── audit_24k.py            # Statistical profiling
+├── data/
+│   ├── raw/
+│   │   ├── fmhpi/              # Raw HPI CSVs
+│   │   ├── freddie/            # Raw Freddie Mac CSVs
+│   │   └── fannie/             # Raw Fannie Mae CSVs
+│   ├── silver/                 # Raw CSVs streamed into Parquet
+│   └── gold/                   # Final merged parquets
+```
+### 3. Execution Sequence
+
+Run the scripts in the following order to maintain data integrity and manage disk pressure:
+
+stream_to_parquet.py: Streams raw Agency CSVs into partitioned Silver Parquet files.
+
+fmhpi_to_parquet.py: Converts raw FHFA indices into indexed Parquet format.
+
+goldgenerator.py: Aggregates processed files for enrichment.
+
+24kgoldgenerator.py: Performs the massive time-series join between Agency data and HPI data.
+
+final_polish.py: Executes surgical cleaning on strings and geographic codes.
+
+audit_24k.py: Generates the final statistical profile.
