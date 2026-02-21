@@ -1,9 +1,9 @@
 # GSE Data Integration Engine (Freddie Mac & Fannie Mae)
 
 ## Project Overview
-The core achievement of this pipeline is the resolution of the **"Fannie Mae Null Gap"** for the 2021–2025 period. Utilizing a custom **Mark-to-Market (MtM) enrichment engine**, the pipeline backfilled critical missing valuation data, ensuring continuity in loan-to-value analysis across the dataset. 
+The core achievement of this platform is the unification of disparate performance datasets from the two primary Government-Sponsored Enterprises (GSEs), Fannie Mae and Freddie Mac. By reconciling competing data schemas and taxonomies, the engine transforms over 630M+ siloed records into a singular, high-integrity analytical lakehouse.
 
-This high-performance data engineering platform ingests, reconciles, and standardizes massive-scale mortgage performance data from **Freddie Mac** and **Fannie Mae** using a **Medallion Architecture** to transform siloed text files into a unified, query-ready analytical dataset.
+Leveraging a Medallion Architecture, the pipeline also implements an HPI-based Mark-to-Market (MtM) enrichment engine. This processes and populates missing valuation data points, ensuring seamless LTV continuity across the 2021–2025 vintage—a period otherwise characterized by significant data fragmentation.
 
 ---
 
@@ -27,8 +27,8 @@ This high-performance data engineering platform ingests, reconciles, and standar
 ### 1. Data Acquisition
 Obtain the raw source files from the following portals:
 * **Fannie Mae:** [Single-Family Loan Performance Data](https://capitalmarkets.fanniemae.com/credit-risk-transfer/single-family-credit-risk-transfer/fannie-mae-single-family-loan-performance-data) (2021–2025 Acquisition/Performance).
-* **Freddie Mac:** [Single-Family Loan-Level Dataset](https://sf.freddiemac.com/tools-learning/resources/sf-loan-level-dataset) (2021–2025 Historical).
-* **FHFA:** [HPI Master Files](https://www.fhfa.gov/DataTools/Downloads/Pages/House-Price-Index-Datasets.aspx) (HPI_master.csv).
+* **Freddie Mac:** [Single-Family Loan-Level Dataset](https://www.freddiemac.com/research/datasets/sf-loanlevel-dataset) (2021–2025 Historical).
+* **FMHPI:** [HPI Master Files](https://www.freddiemac.com/research/indices/house-price-index) (HPI_master.csv).
 
 ### 2. Directory Structure
 ```text
@@ -55,13 +55,13 @@ Run the scripts in the following order to maintain data integrity and manage dis
 
 **stream_to_parquet.py:** Streams raw Agency CSVs into partitioned Silver Parquet files.
 
-**fmhpi_to_parquet.py:** Converts raw FHFA indices into indexed Parquet format.
+**fmhpi_to_parquet.py:** Converts raw FMHPI indices into indexed Parquet format.
 
-**goldgenerator.py:** Aggregates processed files for enrichment.
+**goldgenerator.py:** Aggregates processed Freddie and Fanny files, matches schema, and nullifies sentinels.
 
-**24kgoldgenerator.py:** Performs the massive time-series join between Agency data and HPI data.
+**24kgoldgenerator.py:** Performs the massive time-series join between Agency data and FMHPI data.
 
-**final_polish.py:** Executes surgical cleaning on strings and geographic codes.
+**final_polish.py:** Executes surgical cleaning on strings and geographic codes (these issues can be revealed by audit_24k).
 
 **audit_24k.py:** Generates the final statistical profile.
 
