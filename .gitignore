@@ -215,6 +215,7 @@ data/gold/
 *.parquet
 *.csv
 *.txt
+!requirements.txt
 *.duckdb
 
 # If you want to keep the folder structure on GitHub but not the data, 
