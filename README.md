@@ -3,7 +3,7 @@
 ## Project Overview
 The core achievement of this pipeline is the resolution of the **"Fannie Mae Null Gap"** for the 2021–2025 period. Utilizing a custom **Mark-to-Market (MtM) enrichment engine**, the pipeline backfilled critical missing valuation data, ensuring continuity in loan-to-value analysis across the dataset. 
 
-This high-performance data engineering platform ingests, reconciles, and standardizes massive-scale mortgage performance data from **Freddie Mac** and **Fannie Mae** using a **Medallion Architecture** to transform siloed text files into a unified, query-ready data lake.
+This high-performance data engineering platform ingests, reconciles, and standardizes massive-scale mortgage performance data from **Freddie Mac** and **Fannie Mae** using a **Medallion Architecture** to transform siloed text files into a unified, query-ready analytical dataset.
 
 ---
 
