@@ -13,9 +13,13 @@ con.execute(f"CREATE OR REPLACE VIEW gold_view AS SELECT * FROM read_parquet('{E
 
 # Get Schema Info
 cols_info = con.execute("DESCRIBE gold_view").fetchall()
+total_cols = len(cols_info)
 numeric_cols = [row[0] for row in cols_info if row[1] in ('DOUBLE', 'FLOAT', 'BIGINT', 'INTEGER', 'HUGEINT')]
 varchar_cols = [row[0] for row in cols_info if row[1] == 'VARCHAR']
 total_rows = con.execute("SELECT COUNT(*) FROM gold_view").fetchone()[0]
+
+print(f"Total Columns: {total_cols}")
+print(f"Total Rows:    {total_rows:,}")
 
 # --- PART 1: NUMERIC PROFILING ---
 print("\n PART 1: NUMERIC DISTRIBUTIONS")
